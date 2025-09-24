@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -21,56 +23,78 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-// Schema
-const formSchema = z.object({
-  name:z.string().min(1,{message:"Name is required"}),
-  email: z.string().email(),
-  password: z.string().min(1, { message: "Password is required" }),
-   confirmPassword: z.string().min(1, { message: "Password is required" }),
-})
-.refine((data)=> data.password ===data.confirmPassword, {
-  message:"Paaswords don't match",
-  path: ["confirmPassword"],
-});
+
+const formSchema = z
+  .object({
+    name: z.string().min(1, { message: "Name is required" }),
+    email: z.string().email(),
+    password: z.string().min(1, { message: "Password is required" }),
+    confirmPassword: z.string().min(1, { message: "Password is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Paaswords don't match",
+    path: ["confirmPassword"],
+  });
 
 export const SignUpView = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const[pending, setPending] = useState(false);
+  const [pending, setPending] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name:" ",
-      confirmPassword:"",
+      name: " ",
+      confirmPassword: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit =  (data: z.infer<typeof formSchema>) => {
+  const onSocial = (provider: "github" | "google") => {
     setError(null);
-setPending(true);
+    setPending(true);
 
-     authClient.signIn.email(
-     {
-      email:data.email,
-      password: data.password,
-     },
-     {
-      onSuccess: () =>{
-          setPending(false);
-        router.push("/");
+    authClient.signIn.social(
+      {
+        provider: provider,
+       
       },
-      onError:({error}) =>{
-        setError(error.message)
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
       }
+    );
+  };
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    setError(null);
+    setPending(true);
 
-     }
+    authClient.signUp.email(
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+         
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      }
+    );
+  };
 
-     );
-   
-    };
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,10 +108,8 @@ setPending(true);
             >
               {/* Welcome text */}
               <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold"> Let&apos; get started </h1>
-                <p className="text-muted-foreground">
-                 Create  your account
-                </p>
+                <h1 className="text-2xl font-bold"> Let&apos;s get started </h1>
+                <p className="text-muted-foreground">Create your account</p>
               </div>
               <FormField
                 control={form.control}
@@ -155,14 +177,9 @@ setPending(true);
               )}
 
               {/* Submit */}
-            <Button
-  disabled={pending}
-  type="submit"
-  className="w-full"
->
-  Sign In
-</Button>
-
+              <Button disabled={pending} type="submit" className="w-full">
+                Sign Up
+              </Button>
 
               {/* Divider */}
               <div className="relative flex items-center">
@@ -175,19 +192,27 @@ setPending(true);
 
               {/* OAuth buttons */}
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" type="button" className="w-full">
-                  Google
+                <Button 
+                 onClick={()=>onSocial("google")}
+                variant="outline" 
+                type="button"
+                 className="w-full">
+                  <FaGoogle/>
                 </Button>
-                <Button variant="outline" type="button" className="w-full">
-                  GitHub
+                <Button 
+                onClick={()=>onSocial("github")}
+                variant="outline" 
+                type="button" 
+                className="w-full">
+                  <FaGithub/>
                 </Button>
               </div>
 
               {/* Sign up link */}
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link href="/sign-up" className="underline underline-offset-4">
-                  Sign Up
+                <Link href="/sign-in" className="underline underline-offset-4">
+                  Sign In
                 </Link>
               </div>
             </form>

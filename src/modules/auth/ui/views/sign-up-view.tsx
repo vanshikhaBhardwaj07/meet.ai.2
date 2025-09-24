@@ -1,5 +1,6 @@
 "use client";
 
+
 import { Card, CardContent } from "@/components/ui/card";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   Form,
   FormControl,
@@ -41,9 +43,11 @@ export const SignUpView = () => {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+
       name: " ",
       confirmPassword: "",
       email: "",
@@ -96,8 +100,10 @@ export const SignUpView = () => {
   };
 
 
+
   return (
     <div className="flex flex-col gap-6">
+
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           {/* Left side form */}
@@ -214,13 +220,16 @@ export const SignUpView = () => {
                 <Link href="/sign-in" className="underline underline-offset-4">
                   Sign In
                 </Link>
+
               </div>
             </form>
           </Form>
 
+
           {/* Right side logo */}
           <div className="bg-gradient-to-br from-blue-700 to-green-900 hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
             <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
+
             <p className="text-2xl font-semibold text-white">MEET.AI</p>
           </div>
         </CardContent>
@@ -236,6 +245,7 @@ export const SignUpView = () => {
         <a href="#" className="underline hover:text-primary">
           Privacy Policy
         </a>
+
       </div>
     </div>
   );

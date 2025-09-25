@@ -1,5 +1,6 @@
 
 
+
 import { auth } from "@/lib/auth";
 import { SignUpView } from "@/modules/auth/ui/views/sign-up-view";
 import { headers } from "next/headers";
@@ -18,3 +19,4 @@ const Page =async () => {
 };
 
 export default Page;
+

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { Card, CardContent } from "@/components/ui/card";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import { z } from "zod";
@@ -13,6 +14,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   Form,
   FormControl,
@@ -32,6 +34,7 @@ export const SignInView = () => {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,6 +42,7 @@ export const SignInView = () => {
       password: "",
     },
   });
+
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     setError(null);
@@ -186,6 +190,7 @@ export const SignInView = () => {
                 <Link href="/sign-up" className="underline underline-offset-4">
                   Sign Up
                 </Link>
+
               </div>
             </form>
           </Form>
@@ -193,10 +198,11 @@ export const SignInView = () => {
           {/* Right side logo */}
           <div className="bg-radial from-teal-800 via-teal-700 to-green-800 bg-gradient-to-br hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
             <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
-            <p className="text-2xl font-mono text-white">MEET.AI</p>
+
           </div>
         </CardContent>
       </Card>
+
 
       {/* Terms */}
       <div className="text-muted-foreground text-center text-xs">
@@ -208,6 +214,7 @@ export const SignInView = () => {
         <a href="#" className="underline hover:text-primary">
           Privacy Policy
         </a>
+
       </div>
     </div>
   );

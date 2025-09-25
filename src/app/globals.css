@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -42,7 +43,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -51,8 +51,11 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+
+  /* 🔵 Primary color (blue base, matches gradient start) */
+ --primary: oklch(0.47 0.14 210); /* teal-ish, mix of blue+green */
+  --primary-foreground: oklch(1 0 0); 
+
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -63,20 +66,37 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* sidebar bg colors*/
+    /* Sidebar background - dark teal */
+  --sidebar: oklch(0.28 0.09 200); /* ~ darker teal */
+
+  /* Sidebar text color - light teal/white for contrast */
+  --sidebar-foreground: oklch(0.92 0.02 200); /* soft light teal */
+
+  /* Sidebar primary (buttons/active highlights) */
+  --sidebar-primary: oklch(0.35 0.12 190); /* medium teal */
+  --sidebar-primary-foreground: oklch(0.98 0 0); /* white text */
+
+  /* Sidebar active item background */
+  --sidebar-accent: oklch(0.32 0.11 195); /* deep accent teal */
+  --sidebar-accent-foreground: oklch(0.95 0.02 200); /* bright teal text */
+
+  /* Borders and ring */
+  --sidebar-border: oklch(0.22 0.05 200); /* very dark teal border */
+  --sidebar-ring: oklch(0.45 0.12 190);   /* highlight teal ring */
+
+
 }
+
+
+
 
 .dark {
   --background: oklch(0.145 0 0);

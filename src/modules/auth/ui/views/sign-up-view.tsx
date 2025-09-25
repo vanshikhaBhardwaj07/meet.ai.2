@@ -23,7 +23,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-
 const formSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),
@@ -32,7 +31,7 @@ const formSchema = z
     confirmPassword: z.string().min(1, { message: "Password is required" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Paaswords don't match",
+    message: "Passwords don't match",
     path: ["confirmPassword"],
   });
 
@@ -44,57 +43,44 @@ export const SignUpView = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: " ",
-      confirmPassword: "",
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSocial = (provider: "github" | "google") => {
+  // Social login handler
+  const onSocial = async (provider: "github" | "google") => {
     setError(null);
     setPending(true);
-
-    authClient.signIn.social(
-      {
-        provider: provider,
-       
-      },
-      {
-        onSuccess: () => {
-          setPending(false);
-          router.push("/");
-        },
-        onError: ({ error }) => {
-          setError(error.message);
-        },
-      }
-    );
+    try {
+      await authClient.signIn.social({ provider });
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message || "Social login failed");
+    } finally {
+      setPending(false);
+    }
   };
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+
+  // Email sign-up handler
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setError(null);
     setPending(true);
-
-    authClient.signUp.email(
-      {
+    try {
+      await authClient.signUp.email({
         name: data.name,
         email: data.email,
         password: data.password,
-        
-      },
-      {
-        onSuccess: () => {
-          setPending(false);
-          router.push("/");
-         
-        },
-        onError: ({ error }) => {
-          setError(error.message);
-        },
-      }
-    );
+      });
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message || "Sign up failed");
+    } finally {
+      setPending(false);
+    }
   };
-
 
   return (
     <div className="flex flex-col gap-6">
@@ -106,11 +92,12 @@ export const SignUpView = () => {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-6 p-6 md:p-8"
             >
-              {/* Welcome text */}
               <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold"> Let&apos;s get started </h1>
+                <h1 className="text-2xl font-bold">Let's get started</h1>
                 <p className="text-muted-foreground">Create your account</p>
               </div>
+
+              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -118,11 +105,7 @@ export const SignUpView = () => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter your Name"
-                        {...field}
-                      />
+                      <Input placeholder="Enter your Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -137,11 +120,7 @@ export const SignUpView = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="m@example.com"
-                        {...field}
-                      />
+                      <Input placeholder="m@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,11 +135,22 @@ export const SignUpView = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="********"
-                        {...field}
-                      />
+                      <Input type="password" placeholder="********" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Confirm Password */}
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="********" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,25 +182,27 @@ export const SignUpView = () => {
 
               {/* OAuth buttons */}
               <div className="grid grid-cols-2 gap-4">
-                <Button 
-                 onClick={()=>onSocial("google")}
-                variant="outline" 
-                type="button"
-                 className="w-full">
-                  <FaGoogle/>
+                <Button
+                  onClick={() => onSocial("google")}
+                  variant="outline"
+                  type="button"
+                  className="w-full"
+                >
+                  <FaGoogle />
                 </Button>
-                <Button 
-                onClick={()=>onSocial("github")}
-                variant="outline" 
-                type="button" 
-                className="w-full">
-                  <FaGithub/>
+                <Button
+                  onClick={() => onSocial("github")}
+                  variant="outline"
+                  type="button"
+                  className="w-full"
+                >
+                  <FaGithub />
                 </Button>
               </div>
 
-              {/* Sign up link */}
+              {/* Sign in link */}
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Already have an account?{" "}
                 <Link href="/sign-in" className="underline underline-offset-4">
                   Sign In
                 </Link>

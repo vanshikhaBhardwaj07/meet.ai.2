@@ -24,8 +24,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-
-
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, { message: "Password is required" }),
@@ -67,27 +65,25 @@ export const SignInView = () => {
     );
   };
 
-    const onSocial = (provider: "github" | "google") => {
-      setError(null);
-      setPending(true);
-  
-      authClient.signIn.social(
-        {
-          provider: provider,
-         
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
         },
-        {
-          onSuccess: () => {
-            setPending(false);
-            router.push("/")
-         
-          },
-          onError: ({ error }) => {
-            setError(error.message);
-          },
-        }
-      );
-    };
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,9 +98,7 @@ export const SignInView = () => {
               {/* Welcome text */}
               <div className="text-center space-y-2">
                 <h1 className="text-2xl font-bold">Welcome Back</h1>
-                <p className="text-muted-foreground">
-                  Login into your account
-                </p>
+                <p className="text-muted-foreground">Login into your account</p>
               </div>
 
               {/* Email */}
@@ -177,16 +171,16 @@ export const SignInView = () => {
                   type="button"
                   className="w-full"
                 >
-                  <FaGoogle/>
+                  <FaGoogle />
                 </Button>
                 <Button
                   disabled={pending}
-                 onClick={() => onSocial("github")}
+                  onClick={() => onSocial("github")}
                   variant="outline"
                   type="button"
                   className="w-full"
                 >
-                  <FaGithub/>
+                  <FaGithub />
                 </Button>
               </div>
 
@@ -202,10 +196,9 @@ export const SignInView = () => {
           </Form>
 
           {/* Right side logo */}
-          <div className="bg-gradient-to-br from-blue-700 to-green-900 hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
+          <div className="bg-radial from-teal-800 via-teal-700 to-green-800 bg-gradient-to-br hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
             <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
 
-            <p className="text-2xl font-semibold text-white">MEET.AI</p>
           </div>
         </CardContent>
       </Card>

@@ -3,28 +3,36 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { AgentGetOne } from "../../types";
 import { GeneratedAvatar } from "@/components/ui/generated-avatar";
-import { VideoIcon, CornerDownRightIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
+import { CornerRightDownIcon } from "lucide-react";
+import { VideoIcon } from "lucide-react";
 
 export const columns: ColumnDef<AgentGetOne>[] = [
   {
     accessorKey: "name",
     header: "Agent Name",
     cell: ({ row }) => (
-      <div className="flex flex-col gap-y-1">
+
+      <div className="flex items-center gap-x-2">
+
         <div className="flex items-center gap-x-2">
           <GeneratedAvatar
             variant="botttsNeutral"
             seed={row.original.name}
             className="size-6"
           />
-          <span className="font-semibold capitalize">{row.original.name}</span>
+
+          <span className="font-semibold capitalize ">{row.original.name}</span>
         </div>
-        <div className="flex items-center gap-x-2">
-          <CornerDownRightIcon className="size-3 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground max-w-[200px] truncate capitalize">
+        <div className="flex items-center gap-x-1">
+          <div className="flex items-center gap-x-1">
+            <CornerRightDownIcon className="size-3 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground max-w-[200px] truncate capitalize">
             {row.original.instructions}
-          </span>
+            </span>
+          </div>
+
         </div>
       </div>
     ),
@@ -32,11 +40,18 @@ export const columns: ColumnDef<AgentGetOne>[] = [
   {
     accessorKey: "meetingCount",
     header: "Meetings",
-    cell: () => (
-      <Badge variant="outline" className="flex items-center gap-x-2 [&svg]:size-4">
-        <VideoIcon className="text-blue-700" />
-        5 meetings 
-      </Badge>
-    ),
-  },
+
+    cell: ({ row }) => (
+        <Badge
+         variant="outline"
+         className="flex items-center gap-x-2"
+        
+        >
+         <VideoIcon className="text-black-700"/>
+
+        </Badge>
+    )
+
+  }
+
 ];

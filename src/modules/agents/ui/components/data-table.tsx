@@ -1,10 +1,13 @@
+
 "use client"
+
 
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
+
 } from "@tanstack/react-table"
 
 import {
@@ -25,10 +28,12 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+
   })
 
   return (
@@ -61,6 +66,7 @@ export function DataTable<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
+
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -68,13 +74,16 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
+
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+  No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
     </div>
+
   )
 }
+

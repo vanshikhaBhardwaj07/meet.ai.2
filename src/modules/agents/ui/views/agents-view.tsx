@@ -3,7 +3,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { LoadingState } from "@/components/loading-state";
+import {DataTable } from "../components/data-table";
 import { ErrorState } from "@/components/error-state";
+
 import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -34,3 +36,4 @@ export const AgentsViewLoading = () => {
       />
     )
 }
+

@@ -3,37 +3,51 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { LoadingState } from "@/components/loading-state";
-import {DataTable } from "../components/data-table";
+import { DataPagination } from "../components/data-pagination";
 import { ErrorState } from "@/components/error-state";
-
 import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
 import { EmptyState } from "@/components/ui/empty-state";
-   
+import { useAgentsFilters } from "@/app/(dashboard)/agents/hooks/use-agents-filters";
+
+
 
 export const AgentsView = () => {
-    const trpc =useTRPC();
-    const { data }= useSuspenseQuery(trpc.agents.getMany.queryOptions());
+  const [filters, setFilters] = useAgentsFilters();
 
-    return(
-       <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4c">
-        <DataTable  data={data} columns={columns}/>
-        {data.length===0 &&(
-            <EmptyState
-            title="Create your first Logo"
-            description=" create an agent to join meetings"
-            />
-        )}
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(
+    trpc.agents.getMany.queryOptions({
+      ...filters,
+    })
+  );
 
-       </div>
-    )
-}
-export const AgentsViewLoading = () => {
-    return (
-      <LoadingState
-      title="Loading Agents"
-      description=" this may take a ew seconds"
+  return (
+    <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4c">
+      <DataTable data={data.items} columns={columns} />
+      <DataPagination
+        page={filters.page}
+        totalPages={data.totalPages}
+        onPageChange={(page) => setFilters({ page })}
       />
-    )
-}
+      {data.items.length === 0 && (
+        <EmptyState title="Create your first Agent" description="" />
+      )}
+    </div>
+  );
+};
 
+
+export const AgentsViewLoading = () => {
+  return <LoadingState title="Loading Agents" description="" />;
+};
+
+
+export const AgentsViewError = () => {
+  return (
+    <ErrorState
+      title={"Error loading agents"}
+      description={"something went wrong"}
+    />
+  );
+};

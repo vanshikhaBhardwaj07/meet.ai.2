@@ -50,8 +50,6 @@ export const AgentsViewLoading = () => {
 
 
 export const AgentsViewError = () => {
-
-
   return (
     <ErrorState
       title={"Error loading agents"}

@@ -5,11 +5,12 @@ import { useTRPC } from "@/trpc/client";
 import { LoadingState } from "@/components/loading-state";
 import { DataPagination } from "../components/data-pagination";
 import { ErrorState } from "@/components/error-state";
-import { DataTable } from "../components/data-table";
+
 import { columns } from "../components/columns";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAgentsFilters } from "@/app/(dashboard)/agents/hooks/use-agents-filters";
 import { useRouter } from "next/navigation";
+import { DataTable } from "@/components/data-table";
 
 
 
@@ -37,23 +38,21 @@ export const AgentsView = () => {
         onPageChange={(page) => setFilters({ page })}
       />
       {data.items.length === 0 && (
-        <EmptyState title="Create your first Agent" description="" />
+        <EmptyState 
+        title="Create your first Agent" description="" />
       )}
     </div>
   );
 };
 
 
-export const AgentsViewLoading = () => {
-  return <LoadingState title="Loading Agents" description="" />;
-};
 
 
-export const AgentsViewError = () => {
-  return (
-    <ErrorState
-      title={"Error loading agents"}
-      description={"something went wrong"}
-    />
-  );
-};
+
+
+
+
+
+
+
+

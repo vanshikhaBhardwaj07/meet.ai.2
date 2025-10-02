@@ -38,7 +38,6 @@ export const MeetingForm = ({
 
 }:MeetingFormProps)=>{
   const trpc = useTRPC();
-  const router=useRouter();
   const queryClient = useQueryClient();
 
   const [openNewAgentDialog, setOpenNewAgentDialog]=useState(false);

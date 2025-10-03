@@ -38,7 +38,7 @@ export const MeetingsView = () => {
   );
 };
 export const MeetingsViewLoading = () => {
-  return <LoadingState title="Loading Agents" description="" />;
+  return <LoadingState title="Loading Meetings" description="" />;
 };
 
 export const meetingsViewError = () => {

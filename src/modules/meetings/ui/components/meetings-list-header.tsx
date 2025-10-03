@@ -5,7 +5,7 @@ import { NewMeetingDialog } from "./new-meeting-dialog";
 import { useState } from "react";
 import { MeetingsSearchFilter } from "./meetings-search-filter";
 import { StatusFilter } from "./status-filter";
-import { AgentIdFilter } from "./agents-id-filter";
+import { AgentIdFilter } from "./agent-id-filter";
 import { useMeetingsFilters } from "../../hooks/use-meetings-filters";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { DEFAULT_PAGE } from "@/constants";

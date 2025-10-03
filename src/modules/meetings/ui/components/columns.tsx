@@ -46,7 +46,7 @@ const statusColorMap = {
 export const columns: ColumnDef<MeetingGetMany[number]>[] = [
   {
     accessorKey: "name",
-    header: "Meeting Name",
+    header: "",
     cell: ({ row }) => (
 
       <div className="flex items-center gap-x-2">
@@ -74,7 +74,7 @@ export const columns: ColumnDef<MeetingGetMany[number]>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "",
 
     cell: ({ row }) => {
        const Icon = statusIconMap[row.original.status as keyof typeof statusIconMap];
@@ -99,7 +99,7 @@ export const columns: ColumnDef<MeetingGetMany[number]>[] = [
   },
     {
       accessorKey: "duration",
-      header: "duration",
+      header: "",
       cell: ({ row }) => (
         <Badge
         variant= "outline"

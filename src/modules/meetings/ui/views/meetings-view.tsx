@@ -31,7 +31,7 @@ export const MeetingsView = () => {
       />
       {data.items.length === 0 && (
               <EmptyState 
-              title="Create your first Agent" description="" />
+              title="Create your first Meeting" description="" />
             )}
     </div>
   
@@ -49,3 +49,11 @@ export const meetingsViewError = () => {
     />
   );
 };
+
+
+
+
+
+
+
+

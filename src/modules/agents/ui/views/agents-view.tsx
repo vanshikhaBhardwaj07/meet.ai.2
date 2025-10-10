@@ -44,6 +44,12 @@ export const AgentsView = () => {
     </div>
   );
 };
+export const AgentsViewLoading = () => {
+  return <LoadingState title="Loading Agents" description="" />;
+};
+export const AgentsViewError = () => {
+  return <ErrorState title="Error loading agents" description="Something went wrong" />;
+};
 
 
 

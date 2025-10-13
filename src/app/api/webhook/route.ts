@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
   if (!verifySignatureWithSDK(body, signature)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
+
   let payload: unknown;
   try {
     payload = JSON.parse(body) as Record<string, unknown>;
@@ -40,14 +41,18 @@ export async function POST(req: NextRequest) {
   }
 
   const eventType = (payload as Record<string, unknown>)?.type;
- 
+
+  // 🔥 Log for debug visibility
+  console.log("🔥 Webhook HIT");
+  console.log("📣 Event Type:", eventType);
+
   if (eventType === "call.session_started") {
     const event = payload as CallSessionStartedEvent;
     const meetingId = event.call.custom?.meetingId;
 
     if (!meetingId) {
       return NextResponse.json(
-        { error: "Misssing meetingId" },
+        { error: "Missing meetingId" },
         { status: 404 }
       );
     }
@@ -88,39 +93,42 @@ export async function POST(req: NextRequest) {
 
     const call = streamVideo.video.call("default", meetingId);
 
-    console.log("Connecting OpenAI Agent with key:", process.env.OPENAI_API_KEY);
+    console.log("📦 Connecting OpenAI Agent");
+    console.log("🔑 OpenAI Key:", process.env.OPENAI_API_KEY);
+    console.log("👤 Agent ID:", existingAgent.id);
+    console.log("🧠 Instructions:", existingAgent.instructions);
 
-  try {
-    const realtimeClient = await streamVideo.video.connectOpenAi({
-      call,
-      openAiApiKey: process.env.OPENAI_API_KEY!,
-      agentUserId: existingAgent.id,
-    });
+    try {
+      const realtimeClient = await streamVideo.video.connectOpenAi({
+        call,
+        openAiApiKey: process.env.OPENAI_API_KEY!,
+        agentUserId: existingAgent.id,
+      });
 
-    realtimeClient.updateSession({
-      instructions: existingAgent.instructions,
-    });
+      realtimeClient.updateSession({
+        instructions: existingAgent.instructions,
+      });
 
-  } catch (err) {
-    console.error("Error connecting OpenAI agent:", err);
-  } else if (eventType === "call.session_participant_left") 
-  {
+      console.log("✅ Agent connected successfully.");
+    } catch (err) {
+      console.error("❌ Error connecting OpenAI agent:", err);
+      return NextResponse.json({ error: "Failed to connect agent" }, { status: 500 });
+    }
+  }
+
+  else if (eventType === "call.session_participant_left") {
     const event = payload as CallSessionParticipantLeftEvent;
     const meetingId = event.call_cid.split(":")[1];
 
     if (!meetingId) {
-        return NextResponse.json({ error: "Missing meetingId"}, {status: 404});
+      return NextResponse.json({ error: "Missing meetingId" }, { status: 404 });
     }
 
-      const call = streamVideo.video.call("default",meetingId);
-      await call.end();
+    const call = streamVideo.video.call("default", meetingId);
+    await call.end();
 
+    console.log(`🔚 Call ended for meeting ${meetingId}`);
   }
-  
-  console.log("Meeting ID:", meetingId);
-  console.log("Agent ID:", existingAgent.id);
-  console.log("Instructions:", existingAgent.instructions);
 
   return NextResponse.json({ status: "ok" });
 }
-

@@ -45,6 +45,14 @@ export const AgentsView = () => {
   );
 };
 
+// ✅ Added these two exports to fix the error
+export const AgentsViewLoading = () => {
+  return <LoadingState title={"Loading"} description={"Agents are loading"} />;
+};
+export const AgentsViewError = () => {
+  return <ErrorState title={"Error"} description={"Something went wrong"} />;
+};
+
 
 
 

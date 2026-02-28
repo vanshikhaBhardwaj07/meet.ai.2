@@ -1,4 +1,10 @@
+export const runtime = "nodejs";
+process.env.WS_NO_BUFFER_UTIL = "true";
+process.env.WS_NO_UTF_8_VALIDATE = "true";
+
 import {and, eq, not } from "drizzle-orm";
+
+import {headers} from "next/headers";
 import {
     //CallEndedEvent,
    //CallTranscriptionReadyEvent,
@@ -28,6 +34,11 @@ export async function POST(req: NextRequest){
 
     const body = await req.text();
 
+
+console.log("Webhook received");
+console.log("RAW BODY:", body);
+
+
     if(!verifySignatureWithSDK(body, signature)) {
         return NextResponse.json({ error: "Invalid signature"}, { status: 401});
     }
@@ -41,9 +52,11 @@ export async function POST(req: NextRequest){
 
     const eventType = (payload as  Record<string, unknown>)?.type;
 
+    console.log("Event Type:", eventType);
+
     if ( eventType === "call.session_started"){
        const event = payload as CallSessionStartedEvent;
-       const meetingId = event.call.custom?.meetingId;
+       const meetingId = event.call?.custom?.meetingId;
         
        if(!meetingId) {
         return NextResponse.json({ error: "Missing meetingId "}, { status: 400 });
@@ -58,7 +71,7 @@ export async function POST(req: NextRequest){
             not(eq(meetings.status, "completed")),
             not(eq(meetings.status, "active")),
             not(eq(meetings.status, "cancelled")),
-             not(eq(meetings.status, "processing")),
+            not(eq(meetings.status, "processing")),
         )
        );
      
@@ -91,22 +104,25 @@ export async function POST(req: NextRequest){
         agentUserId: existingAgent.id,
        });
 
+      
+
         realtimeClient.updateSession({
             instructions: existingAgent.instructions,
         });
 
-    } else if ( eventType === "call.session_participant_left"){
+    } else if(eventType === "call.session_participant_left") {
         const event = payload as CallSessionParticipantLeftEvent;
-        const meetingId = event.call_cid.split(":")[1]; // call_cid is formatted as "type:id"
+        const meetingId = event.call_cid.split(":")[1];
 
         if (!meetingId) {
-            return NextResponse.json({ error: "Missing meetingId"}, { status: 400});
+            return NextResponse.json({ error : "Missing meetingId"}, {status:400});
         }
 
         const call = streamVideo.video.call("default", meetingId);
         await call.end();
-    }
 
+
+    }
     return NextResponse.json({ status: "ok"});
 }
 

@@ -8,7 +8,7 @@ import * as schema from "@/db/schema";
 export const auth = betterAuth({
     trustedOrigins: [
         "http://localhost:3000",
-        "https://tridactyl-kristina-suffocatingly.ngrok-free.dev",
+        "https://percy-drowsy-arlen.ngrok-free.dev",
     ],
     
      socialProviders: {

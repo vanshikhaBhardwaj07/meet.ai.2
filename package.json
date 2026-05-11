@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "dev:webhook": "ngrok http --url=tridactyl-kristina-suffocatingly.ngrok-free.dev 3000"
+    "dev:webhook": "ngrok http --url=percy-drowsy-arlen.ngrok-free.dev 3000"
   },
   "dependencies": {
     "@dicebear/collection": "^9.2.4",
@@ -61,7 +61,7 @@
     "drizzle-orm": "^0.44.5",
     "embla-carousel-react": "^8.6.0",
     "humanize-duration": "^3.33.1",
-    "inngest": "^3.52.4",
+    "inngest": "^4.3.0",
     "input-otp": "^1.4.2",
     "jsonl-parse-stringify": "^1.0.3",
     "lucide-react": "^0.544.0",

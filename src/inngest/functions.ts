@@ -35,16 +35,16 @@ export const meetingsProcessing = inngest.createFunction(
   { id: "meetings/processing", event: "meetings/processing" },
   async ({ event, step }) => {
     const response = await step.run("fetch-transcript", async () => {
-      return fetch(event.data.transcriptUrl).then((res) => res.text());
+      return fetch((event.data as any).transcriptUrl).then((res) => res.text());
     });
 
     const transcript = await step.run("parse-transcript", async () => {
-      return JSONL.parse<StreamTranscriptItem>(response);
+      return JSONL.parse(response) as StreamTranscriptItem[];
     });
 
     const transcriptWithSpeakers = await step.run("add-speakers", async () => {
       const speakerIds = [
-        ...new Set(transcript.map((item) => item.speaker_id)),
+        ...new Set(transcript.map((item: StreamTranscriptItem) => item.speaker_id)),
       ];
 
       const userSpeakers = await db
@@ -69,7 +69,7 @@ export const meetingsProcessing = inngest.createFunction(
 
       const speakers = [...userSpeakers, ...agentSpeakers];
 
-      return transcript.map((item) => {
+      return transcript.map((item: StreamTranscriptItem) => {
         const speaker = speakers.find(
           (speaker) => speaker.id === item.speaker_id,
         );
@@ -102,7 +102,7 @@ export const meetingsProcessing = inngest.createFunction(
             summary: (output[0] as TextMessage).content as string,
             status: "completed",
         })
-        .where(eq(meetings.id, event.data.meetingId))
+        .where(eq(meetings.id, (event.data as any).meetingId))
     })
   },
 );

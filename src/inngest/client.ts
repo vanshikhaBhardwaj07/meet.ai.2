@@ -1,3 +1,3 @@
-import {Inngest} from "inngest";
+import { Inngest } from "inngest";
 
-export const inngest = new Inngest({ id: "meet-ai-2"})
+export const inngest = new Inngest({ id: "meet-ai-2" });

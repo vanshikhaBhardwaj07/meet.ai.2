@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     if (!verifySignatureWithSDK(body, signature)) {
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
     let payload: unknown;
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         const meetingId = event.call.custom?.meetingId;
 
         if (!meetingId) {
-            return NextResponse.json({ error: "Missing MeetingId" }, { status: 400 });
+            return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
         }
 
         const [existingMeeting] = await db
@@ -93,14 +93,19 @@ export async function POST(req: NextRequest) {
         }
 
         const call = streamVideo.video.call("default", meetingId);
-        
+
         console.log("Connecting agent to OpenAI Realtime...");
         try {
+            // NOTE: As of May 2026, OpenAI shut down the Realtime Beta API.
+            // Stream's relay (video.stream-io-api.com/video/connect_agent) uses the
+            // deprecated beta protocol on their backend — this is a Stream SDK bug.
+            // Error: beta_api_shape_disabled — "The Realtime Beta API is no longer supported"
+            // Track fix: https://github.com/GetStream/stream-node/issues
             const realtimeClient = await streamVideo.video.connectOpenAi({
                 call,
                 openAiApiKey: process.env.OPENAI_API_KEY!,
                 agentUserId: existingAgent.id,
-                model: "gpt-4o-mini-realtime-preview",
+                model: "gpt-4o-realtime-preview-2025-06-03",
             });
 
             realtimeClient.updateSession({
@@ -110,7 +115,12 @@ export async function POST(req: NextRequest) {
             activeAgents.set(meetingId, realtimeClient);
             console.log("Agent connected successfully");
         } catch (error) {
-            console.error("Failed to connect OpenAI Realtime:", error);
+            const errObj = error as Record<string, unknown>;
+            console.error("Failed to connect OpenAI Realtime:", JSON.stringify(error, null, 2));
+            if (errObj?.error) {
+                const inner = errObj.error as Record<string, unknown>;
+                console.error("  → Error type:", inner.type, "| Code:", inner.code, "| Message:", inner.message);
+            }
         }
 
     } else if (eventType === "call.session_participant_left") {
@@ -121,8 +131,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
         }
 
-        // Logic could be added here to handle agent disconnect if specific participants leave
-        // For now, we rely on session_ended to disconnect the agent completely
+        // Rely on session_ended to fully disconnect the agent
 
     } else if (eventType === "call.session_ended") {
         const event = payload as CallEndedEvent;

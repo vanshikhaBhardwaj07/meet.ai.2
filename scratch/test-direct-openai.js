@@ -21,7 +21,7 @@ function testDirect(model) {
   const ws = new WebSocket(url, [], {
     finishRequest: (request) => {
       request.setHeader("Authorization", `Bearer ${openAiApiKey}`);
-      request.setHeader("OpenAI-Beta", "realtime=v1"); // Required header
+      // request.setHeader("OpenAI-Beta", "realtime=v1"); // Removed for GA
       request.end();
     },
   });
@@ -49,6 +49,6 @@ function testDirect(model) {
   });
 }
 
-testDirect("gpt-4o-realtime-preview-2024-12-17");
+testDirect("gpt-4o-mini-realtime-preview");
 setTimeout(() => testDirect("gpt-4o-realtime-preview"), 5000);
 

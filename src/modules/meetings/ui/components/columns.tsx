@@ -5,7 +5,7 @@ import { MeetingGetMany } from "../../types";
 import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatDuration } from "@/lib/utils";
 import humanize from "humanize-duration";
 import { 
 CircleCheckIcon,
@@ -18,13 +18,7 @@ LoaderIcon
 } from "lucide-react";
 import humanizeDuration from "humanize-duration";
 
-function formatDuration(seconds: number){
-  return humanizeDuration(seconds*1000,{
-    largest: 1,
-    round: true,
-    units: ["h", "m", "s"]
-  });
-}
+
 
 
 const statusIconMap = {

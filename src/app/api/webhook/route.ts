@@ -96,20 +96,54 @@ export async function POST(req: NextRequest) {
 
         console.log("Connecting agent to OpenAI Realtime...");
         try {
-            // NOTE: As of May 2026, OpenAI shut down the Realtime Beta API.
-            // Stream's relay (video.stream-io-api.com/video/connect_agent) uses the
-            // deprecated beta protocol on their backend — this is a Stream SDK bug.
-            // Error: beta_api_shape_disabled — "The Realtime Beta API is no longer supported"
-            // Track fix: https://github.com/GetStream/stream-node/issues
+            // Uses OpenAI's GA Realtime API. The Beta API shape was removed on
+            // 2026-05-12 and the gpt-4o-realtime-preview models were retired on
+            // 2026-05-07, so this requires @stream-io/openai-realtime-api >= 0.4.0
+            // (GA-native client) and @stream-io/node-sdk >= 0.7.61.
             const realtimeClient = await streamVideo.video.connectOpenAi({
                 call,
                 openAiApiKey: process.env.OPENAI_API_KEY!,
                 agentUserId: existingAgent.id,
-                model: "gpt-4o-realtime-preview-2025-06-03",
+                model: "gpt-realtime",
             });
 
+            // turn_detection MUST be set explicitly: the GA client's
+            // DEFAULT_SESSION_CONFIG uses `turn_detection: null`, which disables
+            // voice activity detection — the agent connects but never takes a
+            // turn, so it stays silent for the whole call.
             realtimeClient.updateSession({
                 instructions: existingAgent.instructions,
+                turn_detection: {
+                    type: "server_vad",
+                    threshold: 0.5,
+                    prefix_padding_ms: 300,
+                    silence_duration_ms: 700,
+                },
+            });
+
+            // Diagnostic: log the OpenAI side of the conversation. speech_started
+            // proves audio is reaching OpenAI; response.created proves it is
+            // answering. Remove once the agent is confirmed working.
+            realtimeClient.on("realtime.event", (e) => {
+                const { source, event } = e as {
+                    source: string;
+                    event: Record<string, unknown>;
+                };
+                const type = event?.type as string;
+                if (type === "error") {
+                    console.error("[realtime ERROR]", JSON.stringify(event));
+                } else if (
+                    [
+                        "session.created",
+                        "session.updated",
+                        "input_audio_buffer.speech_started",
+                        "input_audio_buffer.speech_stopped",
+                        "response.created",
+                        "response.done",
+                    ].includes(type)
+                ) {
+                    console.log(`[realtime:${source}] ${type}`);
+                }
             });
 
             activeAgents.set(meetingId, realtimeClient);
@@ -134,7 +168,7 @@ export async function POST(req: NextRequest) {
         // Rely on session_ended to fully disconnect the agent
 
     } else if (eventType === "call.session_ended") {
-        const event = payload as CallEndedEvent;
+        const event = payload as CallEndedEvent; 
         const meetingId = event.call.custom?.meetingId;
 
         if (!meetingId) {
@@ -168,15 +202,17 @@ export async function POST(req: NextRequest) {
             .where(eq(meetings.id, meetingId))
             .returning();
 
-        if (updatedMeeting) {
-            await inngest.send({
-                name: "meetings/processing",
-                data: {
-                    meetingId: updatedMeeting.id,
-                    transcriptUrl: updatedMeeting.transcriptUrl,
-                }
-            });
+        if (!updatedMeeting){
+            return NextResponse.json({ error: "Meeting not Found"}, {status:404});
         }
+        await inngest.send({
+            name:"meetings/processing",
+            data:{
+                meetingId: updatedMeeting.id,
+                transcriptUrl: updatedMeeting.transcriptUrl,
+            }
+        })
+    
 
     } else if (eventType === "call.recording_ready") {
         const event = payload as CallRecordingReadyEvent;

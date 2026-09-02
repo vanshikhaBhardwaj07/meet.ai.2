@@ -1,4 +1,5 @@
 import JSONL from "jsonl-parse-stringify";
+import { eventType, staticSchema } from "inngest";
 import { inngest } from "@/inngest/client";
 import { StreamTranscriptItem } from "@/modules/meetings/types";
 import { createAgent, openai, TextMessage } from "@inngest/agent-kit";
@@ -31,12 +32,19 @@ Example:
 model: openai({ model: 'gpt-4o', apiKey: process.env.OPENAI_API_KEY}),
 });
 
+// Inngest v4 takes triggers as an array inside the options object; the old
+// top-level `event` key was removed. staticSchema gives `event.data` a type
+// without pulling in runtime validation.
+const meetingsProcessingEvent = eventType("meetings/processing", {
+  schema: staticSchema<{ meetingId: string; transcriptUrl: string }>(),
+});
+
 export const meetingsProcessing = inngest.createFunction(
-  { id: "meetings/processing", event: "meetings/processing" },
+  { id: "meetings/processing", triggers: [meetingsProcessingEvent] },
   async ({ event, step }) => {
-    const response = await step.run("fetch-transcript", async () => {
-      return fetch((event.data as any).transcriptUrl).then((res) => res.text());
-    });
+   const response = await step.run("fetch-transcript", async()=>{
+    return fetch(event.data.transcriptUrl).then((res)=> res.text())
+   });
 
     const transcript = await step.run("parse-transcript", async () => {
       return JSONL.parse(response) as StreamTranscriptItem[];
@@ -102,7 +110,7 @@ export const meetingsProcessing = inngest.createFunction(
             summary: (output[0] as TextMessage).content as string,
             status: "completed",
         })
-        .where(eq(meetings.id, (event.data as any).meetingId))
+        .where(eq(meetings.id, event.data.meetingId))
     })
   },
 );

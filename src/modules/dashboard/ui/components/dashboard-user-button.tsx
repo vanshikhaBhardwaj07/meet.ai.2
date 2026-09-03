@@ -25,10 +25,16 @@ import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 
 import { CreditCardIcon, LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 export const DashboardUserButton = () => {
   const router = useRouter();
   const { data, isPending } = authClient.useSession();
   const isMobile = useIsMobile();
+
+  // Session and viewport are browser-only. Render nothing until after mount so
+  // the first client render matches the server HTML (avoids hydration mismatch).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const onLogout = () => {
     authClient.signOut({
@@ -40,7 +46,7 @@ export const DashboardUserButton = () => {
     });
   };
 
-  if (isPending || !data?.user) {
+  if (!mounted || isPending || !data?.user) {
     return null;
   }
   if (isMobile) {
@@ -71,10 +77,12 @@ export const DashboardUserButton = () => {
           </DrawerHeader>
           <DrawerFooter>
             <Button variant="outline" onClick={() =>{}}>
-              <CreditCardIcon className="size-4 text-black">Billing</CreditCardIcon>
+              <CreditCardIcon className="size-4 text-black" />
+              Billing
             </Button>
             <Button variant="outline" onClick={onLogout}>
-              <LogOutIcon className="size-4 text-black">Logout</LogOutIcon>
+              <LogOutIcon className="size-4 text-black" />
+              Logout
             </Button>
           </DrawerFooter>
         </DrawerContent>
@@ -101,7 +109,7 @@ export const DashboardUserButton = () => {
           <p className="text-xs truncate w-full">{data.user.email}</p>
         </div>
         <ChevronDownIcon className="size-4 shrink-0" />
-      </DropdownMenuTrigger>{" "}
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="right" className="w-72">
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">

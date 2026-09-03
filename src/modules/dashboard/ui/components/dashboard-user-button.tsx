@@ -25,7 +25,11 @@ import { GeneratedAvatar } from "@/components/ui/generated-avatar";
 
 import { CreditCardIcon, LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+import { auth } from "@/lib/auth";
+
 import { useEffect, useState } from "react";
+
 export const DashboardUserButton = () => {
   const router = useRouter();
   const { data, isPending } = authClient.useSession();
@@ -76,9 +80,15 @@ export const DashboardUserButton = () => {
             <DrawerDescription>{data.user.email}</DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
+
+            <Button variant="outline" onClick={() =>authClient.customer.portal()}>
+
+              <CreditCardIcon className="size-4 text-black">Billing</CreditCardIcon>
+
             <Button variant="outline" onClick={() =>{}}>
               <CreditCardIcon className="size-4 text-black" />
               Billing
+
             </Button>
             <Button variant="outline" onClick={onLogout}>
               <LogOutIcon className="size-4 text-black" />
@@ -120,7 +130,9 @@ export const DashboardUserButton = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer flex items-center justify-between">
+        <DropdownMenuItem 
+        onClick={() => authClient.customer.portal()}
+        className="cursor-pointer flex items-center justify-between">
           Billing
           <CreditCardIcon className="size-4" />
         </DropdownMenuItem>

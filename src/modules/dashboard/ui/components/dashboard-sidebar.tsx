@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { DashboardUserButton } from "./dashboard-user-button";
+import { DashboardTrial } from "./dashboard-trial";
 
 import {
   Sidebar,
@@ -44,7 +45,7 @@ const secondSection = [
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
- 
+
   return (
     <Sidebar>
       {/* Logo */}
@@ -78,7 +79,7 @@ export const DashboardSidebar = () => {
                         "hover:bg-gradient-to-r hover:from-teal-700 hover:to-teal-900 hover:text-white",
                         // Active state → solid/gradient teal
                         isActive &&
-                          "bg-gradient-to-r from-teal-800 to-teal-900 text-white border-teal-700/30"
+                          "bg-gradient-to-r from-teal-800 to-teal-900 text-white border-teal-700/30",
                       )}
                       isActive={pathname === item.href}
                     >
@@ -96,13 +97,10 @@ export const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-
-      {/* Separator */}
-      <div className="px-4 py-2">
-        <Separator className="opacity-10 bg-[#5D6B68]" />
-      </div>
-
-
+        {/* Separator */}
+        <div className="px-4 py-2">
+          <Separator className="opacity-10 bg-[#5D6B68]" />
+        </div>
 
         <SidebarGroup>
           <SidebarGroupContent>
@@ -120,7 +118,7 @@ export const DashboardSidebar = () => {
                         "hover:bg-gradient-to-r hover:from-teal-700 hover:to-teal-900 hover:text-white",
                         // Active state → solid/gradient teal
                         isActive &&
-                          "bg-gradient-to-r from-teal-800 to-teal-900 text-white border-teal-700/30"
+                          "bg-gradient-to-r from-teal-800 to-teal-900 text-white border-teal-700/30",
                       )}
                       isActive={pathname === item.href}
                     >
@@ -137,13 +135,11 @@ export const DashboardSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        
       </SidebarContent>
-        <SidebarFooter className="text-white">
-          <DashboardUserButton/>
-        </SidebarFooter>
-
-
+      <SidebarFooter className="text-white">
+        <DashboardTrial />
+        <DashboardUserButton />
+      </SidebarFooter>
     </Sidebar>
   );
 };

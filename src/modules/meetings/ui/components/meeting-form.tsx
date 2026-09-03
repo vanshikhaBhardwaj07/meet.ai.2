@@ -38,6 +38,7 @@ export const MeetingForm = ({
 
 }:MeetingFormProps)=>{
   const trpc = useTRPC();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const [openNewAgentDialog, setOpenNewAgentDialog]=useState(false);
@@ -56,14 +57,22 @@ export const MeetingForm = ({
       onSuccess: async(data) => {
         await queryClient.invalidateQueries(
          trpc.meetings.getMany.queryOptions({})
-        )
-         // TODO: Invalidate free tier usage
+        );
+
+         await queryClient.invalidateQueries(
+         trpc.premium.getFreeUsage.queryOptions()
+        );
+        
       onSuccess?.(data.id);
       },
       onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
+
+      if (error.data?.code === "FORBIDDEN") {
+        router.push("/upgrade");
       }
-// TODO: Check if erroer code is "FORBIDDEN", redire
+      }
+
     })
   )
 
@@ -84,7 +93,7 @@ export const MeetingForm = ({
       onError: (error) => {
       toast.error(error.message)
       }
-// TODO: Check if erroer code is "FORBIDDEN", redirect to "/upgrade"
+
     })
   )
 

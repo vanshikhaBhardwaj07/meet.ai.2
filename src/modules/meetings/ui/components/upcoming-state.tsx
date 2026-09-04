@@ -22,15 +22,6 @@ export const UpcomingState = ({
         description="Once you start this meeting, a summary will appear here"
       />
       <div className="flex flex-col-reverse lg:justify-center items-center gap-2 w-full">
-        <Button
-         variant="secondary"
-         className="w-full lg:w-auto"
-         onClick={onCancelMeeting}
-         disabled={isCancelling}
-        >
-          <BanIcon />
-          Cancel Meeting
-        </Button>
         <Button disabled={isCancelling} asChild className="w-full lg:w-auto">
           <Link href={`/call/${meetingId}`}>
             <VideoIcon />

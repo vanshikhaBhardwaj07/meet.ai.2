@@ -22,10 +22,16 @@ export const auth = betterAuth({
          ],
     }),
    ],
+    // Better Auth rejects requests from origins not listed here, so the
+    // deployed URL has to be included or sign-in fails in production. Read it
+    // from the environment rather than hardcoding, so the same code works on
+    // Vercel, on an ngrok tunnel, and locally.
     trustedOrigins: [
         "http://localhost:3000",
-        "https://percy-drowsy-arlen.ngrok-free.dev",
-    ],
+        process.env.NEXT_PUBLIC_APP_URL,
+        process.env.BETTER_AUTH_URL,
+        process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+    ].filter((origin): origin is string => Boolean(origin)),
     
      socialProviders: {
         github: { 

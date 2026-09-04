@@ -14,17 +14,14 @@ export const GeneratedAvatar = ({
   className,
   variant,
 }: GeneratedAvatarProps) => {
-  let avatar: any;
-
-  if (variant === "botttsNeutral") {
-    avatar = createAvatar(botttsNeutral, { seed });
-  } else {
-    avatar = createAvatar(initials, {
-      seed,
-      fontWeight: 500,
-      fontSize: 42,
-    });
-  }
+  const avatar =
+    variant === "botttsNeutral"
+      ? createAvatar(botttsNeutral, { seed })
+      : createAvatar(initials, {
+          seed,
+          fontWeight: 500,
+          fontSize: 42,
+        });
 
   return (
     <Avatar className={cn(className)}>

@@ -60,8 +60,8 @@ export const SignUpView = () => {
     try {
       await authClient.signIn.social({ provider });
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Social login failed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Social login failed");
     } finally {
       setPending(false);
     }
@@ -78,8 +78,8 @@ export const SignUpView = () => {
         password: data.password,
       });
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Sign up failed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign up failed");
     } finally {
       setPending(false);
     }
@@ -98,7 +98,7 @@ export const SignUpView = () => {
               className="flex flex-col gap-6 p-6 md:p-8"
             >
               <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold">Let's get started</h1>
+                <h1 className="text-2xl font-bold">Let&apos;s get started</h1>
                 <p className="text-muted-foreground">Create your account</p>
               </div>
 

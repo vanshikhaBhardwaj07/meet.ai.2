@@ -221,7 +221,7 @@ export const SignUpView = () => {
           <div className="bg-gradient-to-br from-blue-700 to-green-900 hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
             <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
 
-            <p className="text-2xl font-semibold text-white">MEET.AI</p>
+            <p className="text-2xl font-semibold text-white">MEETINGLY</p>
           </div>
         </CardContent>
       </Card>

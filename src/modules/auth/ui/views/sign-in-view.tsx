@@ -194,7 +194,7 @@ export const SignInView = () => {
           {/* Right side logo */}
           <div className="bg-radial from-teal-800 via-teal-700 to-green-800 bg-gradient-to-br hidden md:flex flex-col gap-y-4 items-center justify-center p-6">
             <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
-            <span className="text-white text-2xl font-bold">MEET.AI</span>
+            <span className="text-white text-2xl font-bold">MEETINGLY</span>
           </div>
         </CardContent>
       </Card>

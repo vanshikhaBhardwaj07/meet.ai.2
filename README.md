@@ -5,13 +5,7 @@ AI-powered video meeting platform where AI agents join live calls and automatica
 **Live:** https://meetingly-a.vercel.app
 **Repo:** https://github.com/vanshikhaBhardwaj07/Meetingly
 
-<!--
-  TODO: add a screenshot of the app (dashboard or an active call) here.
-  Easiest way: open this file on github.com, click the pencil to edit,
-  and drag-and-drop an image straight into the text box — GitHub hosts
-  it automatically and writes the markdown link for you.
--->
-![Meetingly screenshot](./docs/screenshot.png)
+![Meetingly screenshot](https://github.com/user-attachments/assets/9ddc03d8-87fb-472c-945e-75a99a6426ab)
 
 ## Features
 

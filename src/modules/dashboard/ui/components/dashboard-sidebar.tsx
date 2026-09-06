@@ -2,7 +2,6 @@
 
 import { BotIcon, StarIcon, VideoIcon } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -14,7 +13,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -48,16 +46,8 @@ export const DashboardSidebar = () => {
 
   return (
     <Sidebar>
-      {/* Logo */}
-      <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-2 pt-2">
-          <Image src="/logo.svg" height={36} width={36} alt="MEETINGLY" />
-          <p className="text-2xl font-semibold text-white">MEETINGLY</p>
-        </Link>
-      </SidebarHeader>
-
       {/* Separator */}
-      <div className="px-4 py-2">
+      <div className="px-4 pt-4 pb-2">
         <Separator className="opacity-10 bg-[#5D6B68]" />
       </div>
 

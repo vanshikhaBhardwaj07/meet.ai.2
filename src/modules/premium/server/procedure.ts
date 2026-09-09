@@ -3,16 +3,14 @@ import { eq, count } from "drizzle-orm";
 import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 
-import { polarClient } from "@/lib/polar";
+import { getCustomerState, polarClient } from "@/lib/polar";
 import {createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const premiumRouter = createTRPCRouter({
     getCurrentSubscription: protectedProcedure.query(async ({ctx}) => {
-        const customer = await polarClient.customers.getStateExternal({
-            externalId:ctx.auth.user.id,
-        });
+        const customer = await getCustomerState(ctx.auth.user.id);
 
-        const subscription = customer.activeSubscriptions[0];
+        const subscription = customer?.activeSubscriptions[0];
 
         if (!subscription){
             return null;
@@ -37,11 +35,9 @@ export const premiumRouter = createTRPCRouter({
      return products.result.items;
   }),
   getFreeUsage: protectedProcedure.query(async ({ ctx }) => {
-    const customer = await polarClient.customers.getStateExternal({
-      externalId: ctx.auth.user.id,
-    });
+    const customer = await getCustomerState(ctx.auth.user.id);
 
-    const subscription = customer.activeSubscriptions[0];
+    const subscription = customer?.activeSubscriptions[0];
 
     if (subscription) {
       return null;

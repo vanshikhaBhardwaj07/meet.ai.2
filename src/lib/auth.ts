@@ -12,7 +12,11 @@ export const auth = betterAuth({
    plugins: [
     polar({
          client: polarClient,
-         createCustomerOnSignUp:true,//this will allow us to synchronize our users with polar customers.
+         // Kept off so sign-up never depends on a Polar API round-trip. The
+         // customer is created lazily on first checkout instead; enabling this
+         // makes every failed Polar call (bad token, wrong server) abort
+         // sign-up before a session is issued.
+         createCustomerOnSignUp:false,
          use: [
             checkout({
              authenticatedUsersOnly: true,

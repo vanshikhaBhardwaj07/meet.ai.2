@@ -46,7 +46,7 @@ export const SignUpView = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -54,35 +54,50 @@ export const SignUpView = () => {
   });
 
   // Social login handler
-  const onSocial = async (provider: "github" | "google") => {
+  const onSocial = (provider: "github" | "google") => {
     setError(null);
     setPending(true);
-    try {
-      await authClient.signIn.social({ provider });
-      router.push("/");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Social login failed");
-    } finally {
-      setPending(false);
-    }
+
+    authClient.signIn.social(
+      { provider },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setPending(false);
+          setError(error.message);
+        },
+      }
+    );
   };
 
   // Email sign-up handler
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     setError(null);
     setPending(true);
-    try {
-      await authClient.signUp.email({
+
+    authClient.signUp.email(
+      {
         name: data.name,
         email: data.email,
         password: data.password,
-      });
-      router.push("/");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign up failed");
-    } finally {
-      setPending(false);
-    }
+      },
+      {
+        // Navigate only after Better Auth confirms success and has set the
+        // session cookie; otherwise a failed sign-up falls through to "/"
+        // and the dashboard bounces the user back to /sign-in with no error.
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setPending(false);
+          setError(error.message);
+        },
+      }
+    );
   };
 
 

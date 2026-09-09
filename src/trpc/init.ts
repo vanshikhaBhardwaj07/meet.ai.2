@@ -2,7 +2,7 @@ import { initTRPC , TRPCError} from '@trpc/server';
 import { cache } from 'react';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { polarClient } from '@/lib/polar';
+import { getCustomerState } from '@/lib/polar';
 import { db } from '@/db';
 import { agents, meetings } from '@/db/schema';
 import { count, eq } from 'drizzle-orm';
@@ -45,9 +45,7 @@ export const protectedProcedure = baseProcedure.use(async({ctx,next}) => {
 
 export const premiumProcedure = (entity: "meetings" | "agents") =>
   protectedProcedure.use(async ({ ctx, next }) => {
-    const customer = await polarClient.customers.getStateExternal({
-      externalId: ctx.auth.user.id,
-    });
+    const customer = await getCustomerState(ctx.auth.user.id);
 
     const [userMeetings] = await db
           .select({
@@ -63,7 +61,9 @@ export const premiumProcedure = (entity: "meetings" | "agents") =>
           .from(agents)
           .where(eq(agents.userId, ctx.auth.user.id));
 
-          const isPremium = customer.activeSubscriptions.length >0;
+          // No Polar customer yet means the user has never checked out, so
+          // they are on the free tier and the limits below still apply.
+          const isPremium = (customer?.activeSubscriptions.length ?? 0) >0;
           const isFreeAgentLimitedReached = userAgents.count>=MAX_FREE_AGENTS;
           const isFreeMeetingLimitReached = userMeetings.count>=MAX_FREE_MEETINGS;
 
